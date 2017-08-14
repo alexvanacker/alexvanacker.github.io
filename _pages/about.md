@@ -8,10 +8,12 @@ author_profile: true
 ---
 
 
-I am a Software Engineer at Exalead - Dassault Systèmes. We do cool stuff with search engines, come [check us out](https://www.3ds.com/products-services/exalead/)!
+I am a Software Developer at Exalead - Dassault Systèmes. We do cool stuff with search engines, like building one, come [check us out](https://www.3ds.com/products-services/exalead/)!
 
-I have wanted to start blogging for a while now, but always felt I would be too novice in a topic to discuss it on the Web. I finally decided confronting my vision on a topic was one of the best ways to fully understand it fully, hence this blog. 
+I have always been interested in algorithms, which is why I got into computer science in the first place. And since I started working as a developer, I have also grown an interest in the craft of coding: design, architecture, you name it. But most of all, I like trying things to see how they actually function. 
 
-I'll mostly talk about things I encountered at work, ranging from development language tricks to why my test method was wrong. 
+This blog will be about those experiments and technical challenges I ran into along the way. If you're a developer or tech-lover, you may find some interesting stuff here, who knows?
 
-Feel free to contact me via Twitter if you have any questions!
+My goal is to use this blog as a way to perfect my understanding on a given subject by clearly explaining it and then confronting that explanation to the world. In other words: comments are more than welcome!
+
+And if you have any questions, feel free to [contact me via Twitter](https://twitter.com/alexvanacker).
