@@ -114,7 +114,7 @@ analytics:
 author:
   name             : "Alexis Vanacker"
   avatar           : "/assets/images/author-pic.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "A software developer with a taste for tennis, music, and beer."
+  bio              : "A software engineer with a taste for tennis, music, cooking, and beer."
   location         : "Paris, France"
   email            :
   links:
