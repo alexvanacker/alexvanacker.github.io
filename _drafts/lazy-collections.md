@@ -2,6 +2,8 @@
 layout     : posts
 title      : "debugging Lazy Eclipse Collections"
 excerpt    : "A blog post about Lazy Collections, Eclipse Collections, and debugging"
+draft      : true
+date       : 2024-08-09 12:00:00
 ---
 
 I have been a big fan of [Eclipse Collections](https://eclipse.dev/collections/) ever since our architect at Concord introduced this library to me. At the time, Java 9 wasn't out, so we didn't have immutable lists, which this library did. But more than that, it brought very _semantic_ methods for what we wanted to write as code, compared sometimes to the Stream API.
@@ -54,9 +56,15 @@ Should your list be huge, or potentially infinite (think streams), then this wou
 With lazy collections, any iteration operation that is not needed by a subsequent operation is deferred until that moment. So, this would push back any processing and temporary object creation until these are actually needed.
 
 If we take back the very basic example shown above, the `slowCode` would only happen for the five elements needed instead of the whole list.
+What happens is:
+
+```java
+myList.take(5)
+    .map(element-> slowCode(element))
+```
 
 ## Lazy collections with EclipseCollections
-
+To keep?
 
 
 # So what was the issue?
@@ -104,31 +112,68 @@ When we open up this `newWithAll` method[^newWithAll] that decided to ruin my da
         Iterate.forEachWithIndex(elements, (each, index) -> array[oldSize + index] = each);
         return Lists.immutable.with(array);
     }
-
 ```
 
 How do we blow this up? The only way for the exception to happen would be for: 
-`oldSize + index > oldSize + newSize - 1`.
+$$ oldSize + index > oldSize + newSize - 1 $$
+
+
 Read that again, then think about it.
 
-This means that `index > newSize - 1`.
-And what is index? Well, it should be contained between `0` and `newSize - 1` (included) since it's the index on `elements` and `newSize` is `elements`'s number of items. Or mathematically put
-```
- 0 <= index <= newSize - 1
+This means that 
 
-```
+$$index > newSize - 1$$
 
-Simply put, the number of elements counted at the definition of `newSize` does not match the number of elements when we iterate on them.
+And what is index? Well, it should be contained between `0` and `newSize - 1` (included) since it's the index on `elements` and `newSize` is `elements`'s number of items. Or mathematically put:
+
+$$ 0 <= index <= newSize - 1 $$
+
+Simply put, the number of elements counted at the definition of `newSize` does not match the number of elements when we iterate on them. Let us see how that is possible.
 
 ## Putting it together with the previous code
 
+Remember the code before: `elements` we pass is a `LazyIterable`. And how is that `LazyIterable` built? We fill the elements using the function that runs a queryService on a given page number. In our case, it could very well happen that the query results were _not the same_ between two calls. Or, simply put, this is not a pure function[^pureFunction].
+
+What we are sayingis that between the call to `Iterate.sizeOf` and `Iterate.forEachWithIndex`, the results returned by `queryService` could be different, leading to a different number of items in elements. And back to that Exception blowing up in our face.
+
+How can we show this easily? A simply Java unit test can reproduce it, but even as simple is actually expecting the same sizes between two calls:
+
+```java
+
+    /**
+     * A function returning a random number of elements. 
+     **/
+    Function<Integer, ImmutableList<Integer>> random = integer -> {
+		final var size = (int) (Math.random() * 100);
+		return Interval.oneTo(size).toImmutableList();
+	};
+
+    @RepeatedTest(10)
+	void sizeTest() {
+		final var items = Interval.fromTo(1, 10)
+		        .collect(i -> i)
+		        .flatCollect(i -> random.apply(i)).toImmutableList();
+		Assertions.assertThat(items.size())
+		        .isEqualTo(items.size());
+	}
+```
+
+If you run this in your favorite IDE, you'll see that this one fails numerously out of the ten attemps we are giving it.
 
 ## The final question
 
+After that I was happy at first, but something bugged me still; I was under the impression that if we call any final operation (typically a forEach) on a Lazy collection, then it would become Eager somehow (i.e. be evaluated) and so would not change anymore. 
+And what really ticked me off is when 
 
 # Final considerations
+
+So how could we have avoided this?
+
+// TODO Talk about simply calling the toList at the end of the call
+// TODO Talk about using a reduce? (maybe too much)
 
 
 
 
 [^newWithAll]: Taken from the source code of [AbstractImmutableList](https://github.com/eclipse/eclipse-collections/blob/master/eclipse-collections/src/main/java/org/eclipse/collections/impl/list/immutable/AbstractImmutableList.java)
+[^pureFunction]: A function that given the same input always returns the same output, without any side effects. See [Wikipedia](https://en.wikipedia.org/wiki/Pure_function). I don't have time to get into the details.
