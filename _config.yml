@@ -309,6 +309,10 @@ compress_html:
     envs: development
 
 
+collections:
+  drafts:
+    output: true
+
 # Defaults
 defaults:
   # _posts
@@ -319,6 +323,17 @@ defaults:
       layout: single
       author_profile: true
       read_time: true
-      comments: # true
+      comments: true
       share: true
       related: true
+
+  - scope:
+      path: ""
+      type: drafts
+    values:
+      layout: single
+      comments: false
+      share: false
+      related: false
+      sitemap: false  #To hide from sitemap.xml
+      noindex: true   #To hide from robots and crawlers
