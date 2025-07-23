@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Chess Opening</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background-color: #f2f2f2;
+    }
+    button {
+      padding: 1em 2em;
+      font-size: 1.2em;
+      margin-top: 1em;
+      border: none;
+      border-radius: 0.5em;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    .move {
+      font-size: 2em;
+      margin-top: 1em;
+    }
+    .name {
+      font-size: 1.2em;
+      margin-top: 0.5em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Random Chess Opening</h1>
+  <div class="move" id="opening">1. ...</div>
+  <div class="name" id="name">Opening Name</div>
+  <button onclick="generateOpening()">New Opening</button>
+
+  <script>
+    const whiteMoves = ["e4", "d4", "Nf3", "c4", "g3"];
+
+    const blackResponses = {
+      "e4": ["e5", "c5", "e6", "c6", "d6"],
+      "d4": ["d5", "Nf6", "e6", "g6"],
+      "Nf3": ["Nf6", "d5", "g6", "c5"],
+      "c4": ["e5", "Nf6", "c5", "g6"],
+      "g3": ["d5", "Nf6", "c5", "g6"]
+    };
+
+    const openingNames = {
+      "e4-e5": "Open Game",
+      "e4-c5": "Sicilian Defense",
+      "e4-e6": "French Defense",
+      "e4-c6": "Caro-Kann Defense",
+      "e4-d6": "Pirc Defense",
+      "d4-d5": "Queen's Gambit Declined",
+      "d4-Nf6": "Indian Defense",
+      "d4-e6": "Queen's Gambit Declined / Nimzo-Indian setups",
+      "d4-g6": "King's Indian Defense",
+      "Nf3-Nf6": "Zukertort Opening / Flexible",
+      "Nf3-d5": "Réti Opening",
+      "Nf3-g6": "King's Indian Attack",
+      "Nf3-c5": "English Defense ideas",
+      "c4-e5": "Reverse Sicilian",
+      "c4-Nf6": "English Opening",
+      "c4-c5": "Symmetrical English",
+      "c4-g6": "English / King's Indian setup",
+      "g3-d5": "King's Fianchetto Opening",
+      "g3-Nf6": "King's Indian Attack",
+      "g3-c5": "Fianchetto English",
+      "g3-g6": "Double Fianchetto"
+    };
+
+    function generateOpening() {
+      const white = whiteMoves[Math.floor(Math.random() * whiteMoves.length)];
+      const blackList = blackResponses[white];
+      const black = blackList[Math.floor(Math.random() * blackList.length)];
+      const key = `${white}-${black}`;
+      const name = openingNames[key] || "Unknown Opening";
+
+      document.getElementById("opening").textContent = `1. ${white} ${black}`;
+      document.getElementById("name").textContent = name;
+    }
+
+    generateOpening();
+  </script>
+</body>
+</html>
